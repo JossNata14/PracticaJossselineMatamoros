@@ -52,8 +52,16 @@ and open the template in the editor.
 
         
         
-        
-	$mail = new PHPMailer();
+          
+    $request = "SELECT user.mail as mail, user.name as name FROM user,userrole where role=userrole.id_Role";
+
+ // obtiene el resultado de la consulta 
+$data = mysqli_query($conexion, $request);
+
+     
+       $rowB = mysqli_fetch_array($data);
+          if($rowB>0){
+             $mail = new PHPMailer();
 	
         
 	$mail->isSMTP();
@@ -66,7 +74,7 @@ and open the template in the editor.
 	$mail->Password = 'prueba.123'; // Password de la cuenta de envío
 	
 	$mail->setFrom('pruebajosselinematamoros@gmail.com', 'Enviado por Control de servicios');
-	$mail->addAddress('josnata14@gmail.com', 'Receptor'); //Correo receptor
+	$mail->addAddress($rowB['mail'], 'Receptor'.$rowB['name']); //Correo receptor
 	
            $mensaje="";
                 //consulta  para extraer los servicios con fecha mayor a la actual
@@ -83,7 +91,7 @@ and open the template in the editor.
 
 
 
-                mysqli_close($conexion);
+              
 	
 	$mail->Subject = 'Servicios proximos a vencer en funcion a su fecha.';
 	$mail->Body    = $mensaje;
@@ -93,4 +101,12 @@ and open the template in the editor.
 		} else {
 		echo 'Error al enviar correo';
 	}
+            }else{
+                echo "Error";
+             
+            }
+                
+          mysqli_close($conexion);        
+        
+	
 ?>
